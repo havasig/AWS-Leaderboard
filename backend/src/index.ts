@@ -1,5 +1,6 @@
 import express from 'express'
 import authRouter from './routes/auth'
+import counterRouter from './routes/counterRouter'
 
 const app = express()
 const PORT = 3000
@@ -15,3 +16,5 @@ app.get('/health', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
 })
+
+app.use('/', counterRouter)
