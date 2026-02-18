@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
-
-const JWT_SECRET = 'your-secret-key'
+import { config } from '../config'
 
 export interface AuthRequest extends Request {
     username?: string
@@ -16,7 +15,7 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
 
     const token = authHeader.split(' ')[1]!
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as unknown as { username: string }
+        const decoded = jwt.verify(token, config.jwtSecret) as unknown as { username: string }
         req.username = decoded.username
         next()
     } catch {

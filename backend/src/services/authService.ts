@@ -2,8 +2,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import admin from 'firebase-admin'
 import serviceAccount from '../../serviceAccount.json'
-
-const JWT_SECRET = 'your-secret-key'
+import { config } from '../config'
 
 if (!admin.apps.length) {
     admin.initializeApp({
@@ -31,6 +30,6 @@ export const login = async (username: string, password: string) => {
     const isValid = await bcrypt.compare(password, user.passwordHash)
     if (!isValid) throw new Error('Invalid credentials')
 
-    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '7d' })
+    const token = jwt.sign({ username }, config.jwtSecret, { expiresIn: '7d' })
     return { token }
 }

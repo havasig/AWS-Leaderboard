@@ -1,9 +1,10 @@
 import express from 'express'
 import authRouter from './routes/auth'
 import counterRouter from './routes/counterRouter'
+import { config } from './config'
+import { env } from 'node:process'
 
 const app = express()
-const PORT = 3000
 
 app.use(express.json())
 
@@ -13,8 +14,8 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok' })
 })
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
+app.listen(config.port, () => {
+    console.log(`Server is running on port ${config.port}`)
 })
 
 app.use('/', counterRouter)
