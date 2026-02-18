@@ -1,3 +1,5 @@
+### Frontend
+
 # Gradle files
 .gradle/
 build/
@@ -32,3 +34,10 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+### Backend
+
+node_modules/
+dist/
+serviceAccount.json
+.env
