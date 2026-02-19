@@ -2,7 +2,6 @@ import express from 'express'
 import authRouter from './routes/auth'
 import counterRouter from './routes/counterRouter'
 import { config } from './config'
-import { env } from 'node:process'
 
 const app = express()
 
