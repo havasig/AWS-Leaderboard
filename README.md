@@ -1,8 +1,11 @@
 # AWS Leaderboard
 
 This is a home project developed by Gabor Havasi, for his sister, Virag. During the project I used Claude a lot, ngl. This readme meant to create notes for myself too during development.
+
 * The backend is a `Node` server with `Express` in `typescript` and a `Firebase DB (?)`.
 * As a frontend I chose `Android`, because that is my main field.
+
+As you can see I did not use git branching, since this is just a home project, but ofcourse I would not do this in a multi developer project:)
 
 # Specification
 
@@ -31,18 +34,32 @@ From here I just copy paste code from Claude to VS Code, and try to understand a
 ### Authentication
 
 JWT tokens ([What else?](https://www.youtube.com/watch?v=DfyeXrdZZ1o&t=46s))
-1. `npm install bcrypt jsonwebtoken`
+* `npm install bcrypt jsonwebtoken`, `npm install -D @types/bcrypt @types/jsonwebtoken`
     * **bcrypt** — for hashing passwords (you never store plain text passwords)
     * **jsonwebtoken** — for creating and verifying JWT tokens
-2. `npm install -D @types/bcrypt @types/jsonwebtoken`
+* The authMiddleware.ts file intercepts every requests to validate the token. If there is not token or invalid then throws error.
 
 ### Database
 
-Firestore Database
+Firebase firestore database
+* Init: `npm install firebase-admin`
+* Data storage structure: Every user stored in the users collection and their id is the username. This enforces to every user has a unique username. This object contains the hashed password and the counter of the user.
 
 
+### Publish
+
+The backend service is published with [Render](https://render.com/) as a web service for free (there will be some limitations).
+
+**TODO**: Deploy only if backend folder is affected.
+
+### Other
+
+* Http request testing - **test.http**
+* Config - `jwt-token-secret`, `firebase secret` and `port` are stored here
+* AI development is **way faster**, than doing everything by myself, I did not try if before.
 
 <br><br><br><br><br><br>
+
 # I keep these md examples for the future
 *This text will be italic*  
 _This will also be italic_
