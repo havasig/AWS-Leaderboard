@@ -5,6 +5,8 @@ import { config } from './config'
 
 const app = express()
 
+// Trigger deploy
+
 app.use(express.json())
 
 app.use('/auth', authRouter)

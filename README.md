@@ -31,6 +31,8 @@ Init steps:
 
 From here I just copy paste code from Claude to VS Code, and try to understand as much as I can.
 
+Route url of the project: https://aws-leaderboard.onrender.com
+
 ### Authentication
 
 JWT tokens ([What else?](https://www.youtube.com/watch?v=DfyeXrdZZ1o&t=46s))
