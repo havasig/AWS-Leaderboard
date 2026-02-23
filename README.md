@@ -2,10 +2,12 @@
 
 This is a home project developed by Gabor Havasi, for his sister, Virag. During the project I used Claude a lot, ngl. This readme meant to create notes for myself too during development.
 
-* The backend is a `Node` server with `Express` in `typescript` and a `Firebase DB (?)`.
+* The backend is a `Node` server with `Express` in `typescript` and a `Firebase firestore database`.
 * As a frontend I chose `Android`, because that is my main field.
 
 As you can see I did not use git branching, since this is just a home project, but ofcourse I would not do this in a multi developer project:)
+
+The project is far from ready, but it is still in progress.
 
 # Specification
 
@@ -17,7 +19,7 @@ This is an Android project, I did not start it yet.
 
 ## Backend
 
-The server of the project can be found in the backend folder of this repository. As above mentioned, it is `Node`, `Express` and `Firebase DB` in `typescript`.
+The server of the project can be found in the backend folder of this repository. As above mentioned, it is `Node`, `Express` and `Firebase firestore database` in `typescript`.
 
 Init steps:
 1. `npm init -y` — Creates package.json to manage dependencies.
@@ -43,16 +45,49 @@ JWT tokens ([What else?](https://www.youtube.com/watch?v=DfyeXrdZZ1o&t=46s))
 
 ### Database
 
-Firebase firestore database
-* Init: `npm install firebase-admin`
-* Data storage structure: Every user stored in the users collection and their id is the username. This enforces to every user has a unique username. This object contains the hashed password and the counter of the user.
+Mix of firebase firestore database and local storage. The user's progress is stored in firebase. Only the cert parameters stored locally on the backend. In this way a redeploy is necessary in any change, but it is not expected many times.
 
+#### Firestore
+
+Init: `npm install firebase-admin`
+
+Data storage structure
+
+```bash
+├── user collection
+│   ├── passwordHash
+│   ├── passwordHash
+├── progress collection
+│   ├── certId
+│   ├── completed
+│   ├── materialId
+│   └── username
+```
+
+#### Local
+
+Data storage structure
+
+```bash
+├── cert
+│   ├── id
+│   ├── title
+│   ├── shortTitle
+│   └── materials
+├── material
+│   ├── id
+│   ├── title
+│   ├── type
+│   └── url
+├── material type
+│   ├── video
+│   ├── article
+│   └── practice
+```
 
 ### Publish
 
-The backend service is published with [Render](https://render.com/) as a web service for free (there will be some limitations).
-
-**TODO**: Deploy only if backend folder is affected.
+The backend service is published with [Render](https://render.com/) as a web service for free (there will be some limitations). The deploy is connected to the git repository, so if there is any change in the `backend` folder, then an automatic deploy will be run.
 
 ### Other
 
