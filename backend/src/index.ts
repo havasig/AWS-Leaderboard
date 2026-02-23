@@ -1,7 +1,7 @@
 import express from 'express'
-import authRouter from './routes/auth'
-import counterRouter from './routes/counterRouter'
+import authRouter from './routes/authRouter'
 import { config } from './config'
+import certRouter from './routes/certRouter'
 
 const app = express()
 
@@ -19,4 +19,4 @@ app.listen(config.port, () => {
     console.log(`Server is running on port ${config.port}`)
 })
 
-app.use('/', counterRouter)
+app.use('/', certRouter)

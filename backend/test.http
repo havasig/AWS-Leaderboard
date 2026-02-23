@@ -1,5 +1,5 @@
 
- @testToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNzcxNDM2NDg1LCJleHAiOjE3NzIwNDEyODV9.CPKe3YOa48YGTlhSlgqfswCFLeP_5ldcPaBzPwVY8r4
+ @testToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNzcxODU4ODcwLCJleHAiOjE3NzI0NjM2NzB9.7TCzjDvp6Xzjvz1Yt2efLI860wsFQuNGuisZyVGBal8
 
 POST http://localhost:3000/auth/register
 Content-Type: application/json
@@ -21,15 +21,25 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/counter
+GET http://localhost:3000/certs
 Authorization: Bearer {{testToken}}
 
 ###
 
-POST http://localhost:3000/counter/increment
+GET http://localhost:3000/certs/progress
+Authorization: Bearer {{testToken}}
+
+###
+
+POST http://localhost:3000/certs/sa-associate/materials/saa-1/complete
 Authorization: Bearer {{testToken}}
 
 ###
 
 GET http://localhost:3000/leaderboard
+Authorization: Bearer {{testToken}}
+
+###
+
+GET http://localhost:3000/users/testuser/progress
 Authorization: Bearer {{testToken}}
