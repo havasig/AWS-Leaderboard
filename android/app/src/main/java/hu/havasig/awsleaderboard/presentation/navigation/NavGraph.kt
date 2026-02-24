@@ -3,9 +3,11 @@ package hu.havasig.awsleaderboard.presentation.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hu.havasig.awsleaderboard.presentation.screens.auth.AuthScreen
 import hu.havasig.awsleaderboard.presentation.screens.home.HomeScreen
@@ -13,9 +15,19 @@ import hu.havasig.awsleaderboard.presentation.screens.home.HomeScreen
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val showBottomBar = currentRoute in listOf(
+        Screen.Home.route,
+        Screen.Leaderboard.route,
+        Screen.Profile.route
+    )
 
     Scaffold(
-        bottomBar = { BottomNavBar(navController = navController) }
+        bottomBar = { if (showBottomBar) {
+            BottomNavBar(navController = navController)
+        } }
     ) { paddingValues ->
         NavHost(
             navController = navController,
