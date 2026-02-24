@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import hu.havasig.awsleaderboard.BuildConfig
 import hu.havasig.awsleaderboard.data.api.ApiService
 import hu.havasig.awsleaderboard.domain.datastore.TokenDataStore
 import kotlinx.coroutines.flow.first
@@ -17,8 +18,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    private const val BASE_URL = "https://aws-leaderboard.onrender.com/"
 
     @Provides
     @Singleton
@@ -39,7 +38,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
