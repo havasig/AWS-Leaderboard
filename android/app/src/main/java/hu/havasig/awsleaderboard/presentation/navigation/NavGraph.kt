@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hu.havasig.awsleaderboard.presentation.screens.auth.AuthScreen
+import hu.havasig.awsleaderboard.presentation.screens.certdetail.CertDetailScreen
 import hu.havasig.awsleaderboard.presentation.screens.home.HomeScreen
 import hu.havasig.awsleaderboard.presentation.screens.leaderboard.LeaderboardScreen
 import hu.havasig.awsleaderboard.presentation.screens.profile.ProfileScreen
@@ -54,7 +55,9 @@ fun NavGraph() {
             }
             composable(Screen.CertDetail.route) { backStackEntry ->
                 val certId = backStackEntry.arguments?.getString("certId") ?: return@composable
-                // TODO: CertDetailScreen
+                CertDetailScreen(
+                    onBack = { navController.popBackStack() }
+                )
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(
