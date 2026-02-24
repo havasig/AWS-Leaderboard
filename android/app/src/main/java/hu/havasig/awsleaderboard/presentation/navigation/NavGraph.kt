@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import hu.havasig.awsleaderboard.presentation.screens.auth.AuthScreen
 import hu.havasig.awsleaderboard.presentation.screens.home.HomeScreen
 import hu.havasig.awsleaderboard.presentation.screens.leaderboard.LeaderboardScreen
+import hu.havasig.awsleaderboard.presentation.screens.profile.ProfileScreen
 
 @Composable
 fun NavGraph() {
@@ -56,7 +57,13 @@ fun NavGraph() {
                 // TODO: CertDetailScreen
             }
             composable(Screen.Profile.route) {
-                // TODO: ProfileScreen
+                ProfileScreen(
+                    onLogout = {
+                        navController.navigate(Screen.Auth.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
             }
             composable(Screen.UserProfile.route) { backStackEntry ->
                 val username = backStackEntry.arguments?.getString("username") ?: return@composable
