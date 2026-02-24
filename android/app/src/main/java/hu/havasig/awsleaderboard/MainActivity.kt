@@ -12,10 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import hu.havasig.awsleaderboard.ui.theme.AWSLeaderboardTheme
+import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
+
         enableEdgeToEdge()
         setContent {
             AWSLeaderboardTheme {
