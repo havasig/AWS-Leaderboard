@@ -11,6 +11,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hu.havasig.awsleaderboard.presentation.screens.auth.AuthScreen
 import hu.havasig.awsleaderboard.presentation.screens.home.HomeScreen
+import hu.havasig.awsleaderboard.presentation.screens.leaderboard.LeaderboardScreen
 
 @Composable
 fun NavGraph() {
@@ -54,15 +55,19 @@ fun NavGraph() {
                 val certId = backStackEntry.arguments?.getString("certId") ?: return@composable
                 // TODO: CertDetailScreen
             }
-            composable(Screen.Leaderboard.route) {
-                // TODO: LeaderboardScreen
-            }
             composable(Screen.Profile.route) {
                 // TODO: ProfileScreen
             }
             composable(Screen.UserProfile.route) { backStackEntry ->
                 val username = backStackEntry.arguments?.getString("username") ?: return@composable
                 // TODO: UserProfileScreen
+            }
+            composable(Screen.Leaderboard.route) {
+                LeaderboardScreen(
+                    onUserClick = { username ->
+                        navController.navigate(Screen.UserProfile.createRoute(username))
+                    }
+                )
             }
         }
     }

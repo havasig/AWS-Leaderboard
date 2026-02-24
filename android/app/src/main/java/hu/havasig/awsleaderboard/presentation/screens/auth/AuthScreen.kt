@@ -58,8 +58,8 @@ fun AuthContent(
     onLogin: (String, String) -> Unit,
     onRegister: (String, String) -> Unit
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("testuser") }
+    var password by remember { mutableStateOf("password123") }
     var isLoginMode by remember { mutableStateOf(true) }
 
     Column(
