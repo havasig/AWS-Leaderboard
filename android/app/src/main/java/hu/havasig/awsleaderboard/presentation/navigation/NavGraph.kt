@@ -14,6 +14,7 @@ import hu.havasig.awsleaderboard.presentation.screens.certdetail.CertDetailScree
 import hu.havasig.awsleaderboard.presentation.screens.home.HomeScreen
 import hu.havasig.awsleaderboard.presentation.screens.leaderboard.LeaderboardScreen
 import hu.havasig.awsleaderboard.presentation.screens.profile.ProfileScreen
+import hu.havasig.awsleaderboard.presentation.screens.profile.UserProfileScreen
 
 @Composable
 fun NavGraph() {
@@ -70,7 +71,9 @@ fun NavGraph() {
             }
             composable(Screen.UserProfile.route) { backStackEntry ->
                 val username = backStackEntry.arguments?.getString("username") ?: return@composable
-                // TODO: UserProfileScreen
+                UserProfileScreen(
+                    onBack = { navController.popBackStack() }
+                )
             }
             composable(Screen.Leaderboard.route) {
                 LeaderboardScreen(
