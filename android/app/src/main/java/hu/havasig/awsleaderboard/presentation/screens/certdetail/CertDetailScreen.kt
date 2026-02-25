@@ -1,8 +1,8 @@
 package hu.havasig.awsleaderboard.presentation.screens.certdetail
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,12 +23,12 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Quiz
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,13 +39,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import hu.havasig.awsleaderboard.annotation.AwsPreviews
 import hu.havasig.awsleaderboard.data.model.CertProgress
 import hu.havasig.awsleaderboard.data.model.Material
-import hu.havasig.awsleaderboard.presentation.screens.auth.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AWSLeaderboardTheme
+import hu.havasig.awsleaderboard.ui.theme.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AwsOrangeLight
 
 @Composable
 fun CertDetailScreen(
@@ -80,14 +85,17 @@ fun CertDetailContent(
                     CircularProgressIndicator(color = AwsOrange)
                 }
             }
+
             uiState.error != null -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = uiState.error, color = Color.Red)
                 }
             }
+
             uiState.cert != null -> {
                 val cert = uiState.cert
-                val percentage = (cert.completedMaterials.toFloat() / cert.totalMaterials.toFloat() * 100).toInt()
+                val percentage =
+                    (cert.completedMaterials.toFloat() / cert.totalMaterials.toFloat() * 100).toInt()
 
                 // Orange header
                 Column(
@@ -96,24 +104,11 @@ fun CertDetailContent(
                         .background(AwsOrange)
                         .padding(16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        IconButton(onClick = onBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Filled.Share,
-                                contentDescription = "Share",
-                                tint = Color.White
-                            )
-                        }
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -122,12 +117,11 @@ fun CertDetailContent(
                         text = cert.shortTitle,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
                     )
                     Text(
                         text = "${cert.totalMaterials} Materials Available",
                         fontSize = 14.sp,
-                        color = Color.White.copy(alpha = 0.8f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -139,13 +133,11 @@ fun CertDetailContent(
                         Text(
                             text = "Overall Progress",
                             fontSize = 14.sp,
-                            color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = "$percentage%",
                             fontSize = 14.sp,
-                            color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -166,11 +158,11 @@ fun CertDetailContent(
                             material = material,
                             onComplete = { onCompleteMaterial(material.id) },
                             onViewResource = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(material.url))
+                                val intent = Intent(Intent.ACTION_VIEW, material.url.toUri())
                                 context.startActivity(intent)
                             }
                         )
-                        HorizontalDivider(color = Color(0xFFEEEEEE))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
                     }
                 }
             }
@@ -194,7 +186,7 @@ fun MaterialRow(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .background(Color(0xFFFFF3E0), RoundedCornerShape(8.dp)),
+                .background(AwsOrangeLight, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -219,7 +211,9 @@ fun MaterialRow(
                 text = "View Resource ↗",
                 fontSize = 12.sp,
                 color = AwsOrange,
-                modifier = Modifier.padding(top = 2.dp)
+                modifier = Modifier
+                    .padding(top = 2.dp)
+                    .clickable { onViewResource() },
             )
         }
 
@@ -228,7 +222,7 @@ fun MaterialRow(
             modifier = Modifier
                 .size(36.dp)
                 .background(
-                    if (material.completed) AwsOrange else Color(0xFFFFF3E0),
+                    if (material.completed) AwsOrange else AwsOrangeLight,
                     RoundedCornerShape(8.dp)
                 ),
             contentAlignment = Alignment.Center
@@ -254,11 +248,28 @@ fun materialTypeIcon(type: String): ImageVector {
     }
 }
 
-@Preview(showBackground = true)
+@AwsPreviews
 @Composable
-fun CertDetailScreenPreview() {
-    CertDetailContent(
-        uiState = CertDetailUiState(
+fun CertDetailScreenPreview(
+    @PreviewParameter(CertDetailUiStatePreviewParamProvider::class) vertUiStateParameter: CertDetailUiState,
+) {
+    AWSLeaderboardTheme {
+        Surface {
+            CertDetailContent(
+                uiState = vertUiStateParameter,
+                onBack = {},
+                onCompleteMaterial = {}
+            )
+        }
+    }
+}
+
+class CertDetailUiStatePreviewParamProvider : PreviewParameterProvider<CertDetailUiState> {
+    override val values: Sequence<CertDetailUiState> = sequenceOf(
+        CertDetailUiState(),
+        CertDetailUiState(isLoading = true),
+        CertDetailUiState(error = "Something went wrong"),
+        CertDetailUiState(
             cert = CertProgress(
                 certId = "sa-associate",
                 title = "AWS Solutions Architect Associate",
@@ -267,13 +278,29 @@ fun CertDetailScreenPreview() {
                 totalMaterials = 3,
                 certified = true,
                 materials = listOf(
-                    Material("saa-1", "Introduction to EC2", "video", "https://example.com", true),
-                    Material("saa-2", "Deep Dive into VPC Networking", "article", "https://example.com", true),
-                    Material("saa-3", "Practice Exam: IAM and Security", "practice_exam", "https://example.com", false)
+                    Material(
+                        "saa-1",
+                        "Introduction to EC2",
+                        "video",
+                        "https://example.com",
+                        true
+                    ),
+                    Material(
+                        "saa-2",
+                        "Deep Dive into VPC Networking",
+                        "article",
+                        "https://example.com",
+                        true
+                    ),
+                    Material(
+                        "saa-3",
+                        "Practice Exam: IAM and Security",
+                        "practice_exam",
+                        "https://example.com",
+                        false
+                    )
                 )
             )
         ),
-        onBack = {},
-        onCompleteMaterial = {}
     )
 }

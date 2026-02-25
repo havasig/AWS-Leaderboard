@@ -36,12 +36,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import hu.havasig.awsleaderboard.annotation.AwsPreviews
 import hu.havasig.awsleaderboard.data.model.CertProgress
-import hu.havasig.awsleaderboard.presentation.screens.auth.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AWSLeaderboardTheme
+import hu.havasig.awsleaderboard.ui.theme.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AwsOrangeLight
+import hu.havasig.awsleaderboard.ui.theme.ErrorRed
 
 @Composable
 fun ProfileScreen(
@@ -102,11 +107,13 @@ fun ProfileContent(
                     CircularProgressIndicator(color = AwsOrange)
                 }
             }
+
             uiState.error != null -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = uiState.error, color = Color.Red)
                 }
             }
+
             else -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -119,7 +126,7 @@ fun ProfileContent(
                         Surface(
                             modifier = Modifier.size(80.dp),
                             shape = CircleShape,
-                            color = Color(0xFFE57373)
+                            color = ErrorRed
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Text(
@@ -152,7 +159,7 @@ fun ProfileContent(
                             Box(
                                 modifier = Modifier
                                     .size(48.dp)
-                                    .background(Color(0xFFFFF3E0), RoundedCornerShape(12.dp)),
+                                    .background(AwsOrangeLight, RoundedCornerShape(12.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
@@ -191,7 +198,8 @@ fun ProfileContent(
 
 @Composable
 fun ProfileCertCard(cert: CertProgress) {
-    val percentage = (cert.completedMaterials.toFloat() / cert.totalMaterials.toFloat() * 100).toInt()
+    val percentage =
+        (cert.completedMaterials.toFloat() / cert.totalMaterials.toFloat() * 100).toInt()
 
     Card(
         modifier = Modifier
@@ -237,25 +245,72 @@ fun ProfileCertCard(cert: CertProgress) {
                 progress = { cert.completedMaterials.toFloat() / cert.totalMaterials.toFloat() },
                 modifier = Modifier.fillMaxWidth(),
                 color = AwsOrange,
-                trackColor = Color(0xFFEEEEEE)
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+@AwsPreviews
 @Composable
-fun ProfileScreenPreview() {
-    ProfileContent(
-        uiState = ProfileUiState(
+fun ProfileScreenPreview(
+    @PreviewParameter(ProfileUiStatePreviewParamProvider::class) profileUiStateParameter: ProfileUiState,
+) {
+    AWSLeaderboardTheme {
+        Surface {
+            ProfileContent(
+                uiState = profileUiStateParameter,
+                onLogout = {}
+            )
+        }
+    }
+}
+
+class ProfileUiStatePreviewParamProvider : PreviewParameterProvider<ProfileUiState> {
+    override val values: Sequence<ProfileUiState> = sequenceOf(
+        ProfileUiState(),
+        ProfileUiState(isLoading = true),
+        ProfileUiState(error = "Something went wrong"),
+        ProfileUiState(
             username = "AlexCloud",
             certProgress = listOf(
-                CertProgress("sa-associate", "AWS Solutions Architect Associate", "SA Associate", 3, 3, true, emptyList()),
-                CertProgress("sa-pro", "AWS Solutions Architect Professional", "SA Professional", 0, 3, false, emptyList()),
-                CertProgress("ml-specialty", "AWS Machine Learning Specialty", "ML Specialty", 0, 3, false, emptyList()),
-                CertProgress("genai-pro", "AWS Generative AI Practitioner", "GenAI Practitioner", 2, 3, false, emptyList())
+                CertProgress(
+                    "sa-associate",
+                    "AWS Solutions Architect Associate",
+                    "SA Associate",
+                    3,
+                    3,
+                    true,
+                    emptyList()
+                ),
+                CertProgress(
+                    "sa-pro",
+                    "AWS Solutions Architect Professional",
+                    "SA Professional",
+                    0,
+                    3,
+                    false,
+                    emptyList()
+                ),
+                CertProgress(
+                    "ml-specialty",
+                    "AWS Machine Learning Specialty",
+                    "ML Specialty",
+                    0,
+                    3,
+                    false,
+                    emptyList()
+                ),
+                CertProgress(
+                    "genai-pro",
+                    "AWS Generative AI Practitioner",
+                    "GenAI Practitioner",
+                    2,
+                    3,
+                    false,
+                    emptyList()
+                )
             )
-        ),
-        onLogout = {}
+        )
     )
 }

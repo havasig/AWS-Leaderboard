@@ -21,6 +21,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,25 +31,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import hu.havasig.awsleaderboard.annotation.AwsPreviews
 import hu.havasig.awsleaderboard.data.model.CertProgress
-import hu.havasig.awsleaderboard.presentation.screens.auth.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AWSLeaderboardTheme
+import hu.havasig.awsleaderboard.ui.theme.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AwsOrangeAccent
+import hu.havasig.awsleaderboard.ui.theme.DarkOnSurface
+
+private const val MAXIMUM_PERCENTAGE = 100
 
 @Composable
 fun HomeScreen(
     onCertClick: (String) -> Unit,
-    username: String = "",
-    viewModel: HomeViewModel = hiltViewModel()
+    username: String,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     HomeContent(
         uiState = uiState,
         onCertClick = onCertClick,
-        username = username
+        username = username,
     )
 }
 
@@ -56,7 +64,7 @@ fun HomeScreen(
 fun HomeContent(
     uiState: HomeUiState,
     onCertClick: (String) -> Unit,
-    username: String = ""
+    username: String,
 ) {
     Column(
         modifier = Modifier
@@ -90,7 +98,6 @@ fun HomeContent(
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = username.take(2).uppercase(),
-                        color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
                     )
@@ -102,15 +109,20 @@ fun HomeContent(
 
         when {
             uiState.isLoading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
                     CircularProgressIndicator(color = AwsOrange)
                 }
             }
+
             uiState.error != null -> {
                 Text(text = uiState.error, color = Color.Red)
             }
+
             else -> {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(uiState.certProgress) { cert ->
                         CertCard(cert = cert, onClick = { onCertClick(cert.certId) })
                     }
@@ -121,12 +133,16 @@ fun HomeContent(
 }
 
 @Composable
-fun CertCard(cert: CertProgress, onClick: () -> Unit) {
+fun CertCard(
+    cert: CertProgress,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+            .clickable { onClick() }
+            .padding(2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -144,7 +160,7 @@ fun CertCard(cert: CertProgress, onClick: () -> Unit) {
                     Icon(
                         imageVector = Icons.Filled.EmojiEvents,
                         contentDescription = "Certified",
-                        tint = Color(0xFFFFB300),
+                        tint = AwsOrangeAccent,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -152,7 +168,8 @@ fun CertCard(cert: CertProgress, onClick: () -> Unit) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            val percentage = (cert.completedMaterials.toFloat() / cert.totalMaterials.toFloat() * 100).toInt()
+            val percentage =
+                (cert.completedMaterials.toFloat() / cert.totalMaterials.toFloat() * MAXIMUM_PERCENTAGE).toInt()
 
             Text(
                 text = "$percentage% Completed",
@@ -166,7 +183,7 @@ fun CertCard(cert: CertProgress, onClick: () -> Unit) {
                 progress = { cert.completedMaterials.toFloat() / cert.totalMaterials.toFloat() },
                 modifier = Modifier.fillMaxWidth(),
                 color = AwsOrange,
-                trackColor = Color(0xFFEEEEEE)
+                trackColor = DarkOnSurface,
             )
 
             if (cert.certified) {
@@ -190,11 +207,28 @@ fun CertCard(cert: CertProgress, onClick: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true)
+@AwsPreviews
 @Composable
-fun HomeScreenPreview() {
-    HomeContent(
-        uiState = HomeUiState(
+fun HomeScreenPreview(
+    @PreviewParameter(HomeUiStatePreviewParamProvider::class) homeUiStateParameter: HomeUiState,
+) {
+    AWSLeaderboardTheme {
+        Surface {
+            HomeContent(
+                uiState = homeUiStateParameter,
+                onCertClick = {},
+                username = "AL"
+            )
+        }
+    }
+}
+
+class HomeUiStatePreviewParamProvider : PreviewParameterProvider<HomeUiState> {
+    override val values: Sequence<HomeUiState> = sequenceOf(
+        HomeUiState(isLoading = true),
+        HomeUiState(error = "Something went wrong"),
+        HomeUiState(),
+        HomeUiState(
             certProgress = listOf(
                 CertProgress(
                     certId = "sa-associate",
@@ -234,7 +268,6 @@ fun HomeScreenPreview() {
                 )
             )
         ),
-        onCertClick = {},
-        username = "AL"
     )
 }
+

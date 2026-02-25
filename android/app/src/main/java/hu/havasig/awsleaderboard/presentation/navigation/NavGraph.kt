@@ -51,7 +51,8 @@ fun NavGraph() {
                 HomeScreen(
                     onCertClick = { certId ->
                         navController.navigate(Screen.CertDetail.createRoute(certId))
-                    }
+                    },
+                    username = "username"
                 )
             }
             composable(Screen.CertDetail.route) { backStackEntry ->

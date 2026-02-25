@@ -8,10 +8,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,12 +33,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-
-val AwsOrange = Color(0xFFFF9900)
+import hu.havasig.awsleaderboard.BuildConfig
+import hu.havasig.awsleaderboard.annotation.AwsPreviews
+import hu.havasig.awsleaderboard.ui.theme.AWSLeaderboardTheme
+import hu.havasig.awsleaderboard.ui.theme.AwsOrange
 
 @Composable
 fun AuthScreen(
@@ -58,9 +68,10 @@ fun AuthContent(
     onLogin: (String, String) -> Unit,
     onRegister: (String, String) -> Unit
 ) {
-    var username by remember { mutableStateOf("testuser") }
-    var password by remember { mutableStateOf("password123") }
+    var username by remember { mutableStateOf(BuildConfig.DEFAULT_USERNAME) }
+    var password by remember { mutableStateOf(BuildConfig.DEFAULT_PASSWORD) }
     var isLoginMode by remember { mutableStateOf(true) }
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -103,7 +114,20 @@ fun AuthContent(
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            trailingIcon = {
+                val image = if (passwordVisible) {
+                    Icons.Filled.Visibility
+                } else {
+                    Icons.Filled.VisibilityOff
+                }
+
+                val description = if (passwordVisible) "Hide password" else "Show password"
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, description)
+                }
+            },
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -138,18 +162,33 @@ fun AuthContent(
         TextButton(onClick = { isLoginMode = !isLoginMode }) {
             Text(
                 text = if (isLoginMode) "Don't have an account? Register" else "Already have an account? Login",
-                color = AwsOrange
+                color = AwsOrange,
+                textAlign = TextAlign.Center,
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+@AwsPreviews
 @Composable
-fun AuthScreenPreview() {
-    AuthContent(
-        uiState = AuthUiState(),
-        onLogin = { _, _ -> },
-        onRegister = { _, _ -> }
+fun AuthScreenPreview(
+    @PreviewParameter(AuthUiStatePreviewParamProvider::class) authUiStateParameter: AuthUiState,
+) {
+    AWSLeaderboardTheme {
+        Surface {
+            AuthContent(
+                uiState = authUiStateParameter,
+                onLogin = { _, _ -> },
+                onRegister = { _, _ -> }
+            )
+        }
+    }
+}
+
+class AuthUiStatePreviewParamProvider : PreviewParameterProvider<AuthUiState> {
+    override val values: Sequence<AuthUiState> = sequenceOf(
+        AuthUiState(),
+        AuthUiState(isLoading = true),
+        AuthUiState(error = "Something went wrong"),
     )
 }

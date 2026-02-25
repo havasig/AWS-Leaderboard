@@ -27,9 +27,13 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"http://192.168.1.95:3000/\"")
+            buildConfigField("String", "DEFAULT_USERNAME", "\"testuser\"")
+            buildConfigField("String", "DEFAULT_PASSWORD", "\"password123\"")
         }
         release {
             buildConfigField("String", "BASE_URL", "\"https://aws-leaderboard.onrender.com/\"")
+            buildConfigField("String", "DEFAULT_USERNAME", "")
+            buildConfigField("String", "DEFAULT_USERNAME", "")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

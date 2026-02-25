@@ -12,11 +12,11 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import hu.havasig.awsleaderboard.presentation.screens.auth.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AwsOrangeLight
 
 data class BottomNavItem(
     val label: String,
@@ -51,7 +51,7 @@ fun BottomNavBar(navController: NavController) {
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = AwsOrange,
                     selectedTextColor = AwsOrange,
-                    indicatorColor = Color(0xFFFFF3E0)
+                    indicatorColor = AwsOrangeLight
                 )
             )
         }

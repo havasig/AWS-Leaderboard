@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,12 +31,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import hu.havasig.awsleaderboard.annotation.AwsPreviews
 import hu.havasig.awsleaderboard.data.model.LeaderboardEntry
-import hu.havasig.awsleaderboard.presentation.screens.auth.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AWSLeaderboardTheme
+import hu.havasig.awsleaderboard.ui.theme.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AwsOrangeAccent
 
 @Composable
 fun LeaderboardScreen(
@@ -57,7 +63,7 @@ fun LeaderboardContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF1A1A1A))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // Orange header
         Column(
@@ -71,7 +77,7 @@ fun LeaderboardContent(
                 modifier = Modifier
                     .size(72.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFFFB300)),
+                    .background(AwsOrangeAccent),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -88,12 +94,11 @@ fun LeaderboardContent(
                 text = "Leaderboard",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
             )
             Text(
                 text = "Top AWS Certified Professionals",
                 fontSize = 14.sp,
-                color = Color.White.copy(alpha = 0.8f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
             )
         }
 
@@ -101,13 +106,21 @@ fun LeaderboardContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFF2A2A2A))
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text("RANK", fontSize = 12.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
-            Text("USER", fontSize = 12.sp, color = Color.Gray, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f).padding(start = 16.dp))
+            Text(
+                "USER",
+                fontSize = 12.sp,
+                color = Color.Gray,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp)
+            )
             Text("CERTS", fontSize = 12.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
         }
 
@@ -117,11 +130,13 @@ fun LeaderboardContent(
                     CircularProgressIndicator(color = AwsOrange)
                 }
             }
+
             uiState.error != null -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = uiState.error, color = Color.Red)
                 }
             }
+
             else -> {
                 LazyColumn {
                     itemsIndexed(uiState.entries) { index, entry ->
@@ -130,7 +145,7 @@ fun LeaderboardContent(
                             entry = entry,
                             onClick = { onUserClick(entry.username) }
                         )
-                        HorizontalDivider(color = Color(0xFF2A2A2A))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             }
@@ -147,7 +162,6 @@ fun LeaderboardRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF1A1A1A))
             .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -156,16 +170,18 @@ fun LeaderboardRow(
             text = "$rank",
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
             modifier = Modifier.size(32.dp)
         )
 
-        Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
+        ) {
             Text(
                 text = entry.username,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
             )
             Text(
                 text = "${entry.materialsCompleted} materials completed",
@@ -180,7 +196,7 @@ fun LeaderboardRow(
                     Icon(
                         imageVector = Icons.Filled.EmojiEvents,
                         contentDescription = null,
-                        tint = Color(0xFFFFB300),
+                        tint = AwsOrangeAccent,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -195,11 +211,28 @@ fun LeaderboardRow(
     }
 }
 
-@Preview(showBackground = true)
+@AwsPreviews
 @Composable
-fun LeaderboardScreenPreview() {
-    LeaderboardContent(
-        uiState = LeaderboardUiState(
+fun LeaderboardScreenPreview(
+    @PreviewParameter(LeaderboardUiStatePreviewParamProvider::class) leaderboardUiStateParameter: LeaderboardUiState,
+) {
+    AWSLeaderboardTheme {
+        Surface {
+            LeaderboardContent(
+                uiState = leaderboardUiStateParameter,
+                onUserClick = {}
+
+            )
+        }
+    }
+}
+
+class LeaderboardUiStatePreviewParamProvider : PreviewParameterProvider<LeaderboardUiState> {
+    override val values: Sequence<LeaderboardUiState> = sequenceOf(
+        LeaderboardUiState(),
+        LeaderboardUiState(isLoading = true),
+        LeaderboardUiState(error = "Something went wrong"),
+        LeaderboardUiState(
             entries = listOf(
                 LeaderboardEntry("AWSExpert", 3, 45),
                 LeaderboardEntry("CloudArchitect", 2, 13),
@@ -207,7 +240,6 @@ fun LeaderboardScreenPreview() {
                 LeaderboardEntry("DataNerd", 1, 6),
                 LeaderboardEntry("NewbieCloud", 0, 2)
             )
-        ),
-        onUserClick = {}
+        )
     )
 }

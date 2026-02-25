@@ -31,13 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import hu.havasig.awsleaderboard.annotation.AwsPreviews
 import hu.havasig.awsleaderboard.data.model.CertProgress
-import hu.havasig.awsleaderboard.presentation.screens.auth.AwsOrange
-import hu.havasig.awsleaderboard.presentation.screens.profile.ProfileCertCard
+import hu.havasig.awsleaderboard.ui.theme.AWSLeaderboardTheme
+import hu.havasig.awsleaderboard.ui.theme.AwsOrange
+import hu.havasig.awsleaderboard.ui.theme.AwsOrangeLight
 
 @Composable
 fun UserProfileScreen(
@@ -91,11 +94,13 @@ fun UserProfileContent(
                     CircularProgressIndicator(color = AwsOrange)
                 }
             }
+
             uiState.error != null -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = uiState.error, color = Color.Red)
                 }
             }
+
             else -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -140,7 +145,7 @@ fun UserProfileContent(
                             Box(
                                 modifier = Modifier
                                     .size(48.dp)
-                                    .background(Color(0xFFFFF3E0), RoundedCornerShape(12.dp)),
+                                    .background(AwsOrangeLight, RoundedCornerShape(12.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
@@ -177,19 +182,66 @@ fun UserProfileContent(
     }
 }
 
-@Preview(showBackground = true)
+@AwsPreviews
 @Composable
-fun UserProfileScreenPreview() {
-    UserProfileContent(
-        uiState = UserProfileUiState(
+fun UserProfileScreenPreview(
+    @PreviewParameter(UserProfileUiStatePreviewParamProvider::class) userProfileUiStateParameter: UserProfileUiState,
+) {
+    AWSLeaderboardTheme {
+        Surface {
+            UserProfileContent(
+                uiState = userProfileUiStateParameter,
+                onBack = {}
+            )
+        }
+    }
+}
+
+class UserProfileUiStatePreviewParamProvider : PreviewParameterProvider<UserProfileUiState> {
+    override val values: Sequence<UserProfileUiState> = sequenceOf(
+        UserProfileUiState(),
+        UserProfileUiState(isLoading = true),
+        UserProfileUiState(error = "Something went wrong"),
+        UserProfileUiState(
             username = "AWSExpert",
             certProgress = listOf(
-                CertProgress("sa-associate", "AWS Solutions Architect Associate", "SA Associate", 3, 3, true, emptyList()),
-                CertProgress("sa-pro", "AWS Solutions Architect Professional", "SA Professional", 2, 3, false, emptyList()),
-                CertProgress("ml-specialty", "AWS Machine Learning Specialty", "ML Specialty", 0, 3, false, emptyList()),
-                CertProgress("genai-pro", "AWS Generative AI Practitioner", "GenAI Practitioner", 1, 3, false, emptyList())
+                CertProgress(
+                    "sa-associate",
+                    "AWS Solutions Architect Associate",
+                    "SA Associate",
+                    3,
+                    3,
+                    true,
+                    emptyList()
+                ),
+                CertProgress(
+                    "sa-pro",
+                    "AWS Solutions Architect Professional",
+                    "SA Professional",
+                    2,
+                    3,
+                    false,
+                    emptyList()
+                ),
+                CertProgress(
+                    "ml-specialty",
+                    "AWS Machine Learning Specialty",
+                    "ML Specialty",
+                    0,
+                    3,
+                    false,
+                    emptyList()
+                ),
+                CertProgress(
+                    "genai-pro",
+                    "AWS Generative AI Practitioner",
+                    "GenAI Practitioner",
+                    1,
+                    3,
+                    false,
+                    emptyList()
+                )
             )
         ),
-        onBack = {}
     )
 }
