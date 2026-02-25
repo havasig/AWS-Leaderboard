@@ -15,7 +15,47 @@ Here comes a lot of details about the project.
 
 ## Frontend
 
-This is an Android project, I did not start it yet.
+The frontend is an android application, implemented with the stack below.
+
+* Jetpack Compose — declerative UI
+* MVVM — architecture
+* Hilt — dependency injection
+* Retrofit — API calls
+* DataStore — storing the JWT token locally
+* Navigation Compose — screen navigation
+* Coroutines + Flow — async operations
+
+### Other
+
+* Version catalog
+* KSP
+* Detekt
+* Timber
+
+### TODO notes
+* Localization everywhere
+
+* Home screen
+    * handle empty cert list
+    * error message looks bad
+    * avatar needs to be fixed in big font
+    * add username as parameter (or load from viewmodel)
+
+* Auth screen
+    * remove default username and password before deploy
+
+* Cert details screen
+    * handle empty screen
+    * error screen looks bad
+
+* Leaderboard screen
+    * handle empty screen
+    * error screen looks bad
+
+ * Profile screen
+    * settings not implemented
+
+* Tests
 
 ## Backend
 
@@ -33,7 +73,7 @@ Init steps:
 
 From here I just copy paste code from Claude to VS Code, and try to understand as much as I can.
 
-Route url of the project: https://aws-leaderboard.onrender.com
+Base url of the project: https://aws-leaderboard.onrender.com
 
 ### Authentication
 
@@ -50,6 +90,8 @@ Mix of firebase firestore database and local storage. The user's progress is sto
 #### Firestore
 
 Init: `npm install firebase-admin`
+
+[Firebase dashboard](https://console.firebase.google.com/u/0/project/aws-leaderboard/overview)
 
 Data storage structure
 
@@ -88,6 +130,8 @@ Data storage structure
 ### Publish
 
 The backend service is published with [Render](https://render.com/) as a web service for free (there will be some limitations). The deploy is connected to the git repository, so if there is any change in the `backend` folder, then an automatic deploy will be run.
+
+[Render dashboard](https://dashboard.render.com/web/srv-d6be0dv5r7bs739ism70)
 
 ### Other
 
